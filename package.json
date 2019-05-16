@@ -1,6 +1,7 @@
 {
-  "name": "playlistador",
+  "name": "playlistator",
   "version": "0.1.0",
+  "author": "Felipe Soares",
   "private": true,
   "dependencies": {
     "@types/jest": "24.0.13",

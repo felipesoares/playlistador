@@ -1,37 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import styles from "./Playlist.module.scss";
 
-import API from "./../../providers/playlistador.providers";
+import API from "./../../providers/playlistator.providers";
 
 export function PlaylistPage(props) {
-  const { name } = props;
-  const playlistID = props.match.params.id;
+  const playlistID = props.match.params.id; // ID da playlist na URL
 
-  const [orderBy, setOrderBy] = useState(0); // Música
+  const [orderBy, setOrderBy] = useState(0); // Ordenação padrão por 'Música'
   const [openDropDown, setOpenDropDown] = useState(false);
 
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState(""); // Termo da busca
 
   const ordenacao = {
     0: { alias: "name", description: "Música" },
     1: { alias: "artist", description: "Artista" },
     2: { alias: "duration", description: "Duração" }
-  };
+  }; // Opções de ordenação
 
-  const [songs, setSongs] = useState();
-  const [results, setResults] = useState();
-  const [feedback, setFeedback] = useState("Carregando músicas...");
+  const [playlistName, setPlaylistName] = useState(""); // Título da playlist
+  const [playlistThumb, setPlaylistThumb] = useState(""); // Thumb da playlist
 
-  const [playlistName, setPlaylistName] = useState("");
-  const [playlistThumb, setPlaylistThumb] = useState("");
+  const [songs, setSongs] = useState(); // Lista das músicas (imutável)
+  const [results, setResults] = useState(); // Lista das músicas a serem exibidas nos resultados (mutável)
+
+  const [feedback, setFeedback] = useState("Carregando músicas..."); // Feedback ao usuário
 
   useEffect(() => {
-    getPlaylists();
+    getPlaylists(); // Ao montar o componente, buscar a lista de músicas
   }, []);
 
+  // Método para consumir a lista de músicas da API em formato JSON
   function getPlaylists() {
     new API()
       .getPlaylist(playlistID)
@@ -40,25 +40,26 @@ export function PlaylistPage(props) {
           var contentType = response.headers.get("content-type");
           if (contentType && contentType.indexOf("application/json") !== -1) {
             return response.json().then(function(json) {
-              setPlaylistName(json.playlist.name);
-              setPlaylistThumb(json.playlist.thumb);
+              setPlaylistName(json.playlist.name); // Título da playlist
+              setPlaylistThumb(json.playlist.thumb); // Thumb da playlist
               // setSongs(json.playlist.songs);
               // setResults(json.playlist.songs);
-              orderList(orderBy, getUnique(json.playlist.songs, "id"));
-              setFeedback("Nenhum resultado encontrado.");
+              orderList(orderBy, getUnique(json.playlist.songs, "id")); // Garante a remoção de registros repetidos da requisição e ordena a playlist pela ordem padrão
+              setFeedback("Nenhum resultado encontrado."); // Muda o feedback padrão para o usuário quando o filtro não retorna dados
             });
           } else {
             setFeedback(`Formato inválido na resposta da requisição :(`);
           }
         } else {
-          setFeedback(`Bad request :(`);
+          setFeedback(`Bad request :(`); // Erro na requisição. Exemplo: ID inexistente.
         }
       })
       .catch(function(error) {
-        setFeedback(`Erro ao tentar processar a requisição :(`);
+        setFeedback(`Erro ao tentar processar a requisição :(`); // Erro na requisição. Exemplo: Falta de autenticação.
       });
   }
 
+  // Função que remove registros repetidos de um vetor de objetos
   function getUnique(arr, comp) {
     const unique = arr
       .map(e => e[comp])
@@ -73,12 +74,14 @@ export function PlaylistPage(props) {
     return unique;
   }
 
+  // Função que remove acentos de uma string
   function removerAcentos(s) {
     return s
       .normalize("NFD")
       .replace(/[\u0300-\u036f|\u00b4|\u0060|\u005e|\u007e]/g, "");
   }
 
+  // Função complementar que ordena o vetor de músicas de acordo com a ordem selecionada
   function sort(arr, key) {
     return arr.sort((a, b) => {
       let c = removerAcentos(a[ordenacao[key].alias]).toLowerCase();
@@ -89,8 +92,9 @@ export function PlaylistPage(props) {
     });
   }
 
+  // Função que ordena o vetor de músicas com ou sem filtro aplicado
   function orderList(key, list) {
-    setOrderBy(parseInt(key));
+    setOrderBy(parseInt(key)); // Atualiza a opção de ordenação
 
     let arr = Object.assign([], list);
 
@@ -102,6 +106,7 @@ export function PlaylistPage(props) {
     setSongs(sort(arr, key));
   }
 
+  // Função que filtra o vetor de músicas de acordo com o termo pesquisado
   function filterList(q, list) {
     q = removerAcentos(q);
     function escapeRegExp(s) {
@@ -146,7 +151,12 @@ export function PlaylistPage(props) {
           <h1 className={styles.title}>{playlistName}</h1>
         </div>
         <div className={"clearfix " + styles.bar}>
-          <label className={styles.label}>Ordenar por</label>
+          <label
+            className={styles.label}
+            onClick={() => setOpenDropDown(!openDropDown)}
+          >
+            Ordenar por
+          </label>
           <ul className={styles.select}>
             {/* onMouseLeave={() => setOpenDropDown(false)} */}
             <li>
@@ -159,7 +169,7 @@ export function PlaylistPage(props) {
                     key={key}
                     onClick={() => {
                       if (orderBy != parseInt(key)) orderList(key, songs);
-                      setOpenDropDown(!openDropDown);
+                      setOpenDropDown(!openDropDown); // Abre ou fecha o menu dropDown
                     }}
                   >
                     {ordenacao[key].description}
@@ -173,17 +183,18 @@ export function PlaylistPage(props) {
             placeholder="Filtrar música"
             // value={filter}
             // onChange={event => setFilter(event.target.value)}
+            autoComplete="off"
+            autoFocus={true}
             onChange={event => {
               setFilter(event.target.value);
               if (event.target.value) {
-                if (results) setResults(filterList(event.target.value, songs));
-              } else setResults(sort(Object.assign([], songs), orderBy));
+                if (results) setResults(filterList(event.target.value, songs)); // filtra as músicas
+              } else setResults(sort(Object.assign([], songs), orderBy)); // limpa o filtro
             }}
             className={styles.filter}
           />
         </div>
       </div>
-      {/* <Link to="/" title="Playlistador">Home</Link> */}
 
       <div className={styles.results}>
         <ul className={styles.itens}>

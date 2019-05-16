@@ -1,6 +1,6 @@
 export default class API {
   configInit: any;
-  url: string = "http://192.168.0.14:3001";
+  url: string = "http://localhost:3001"; // URL de desenvolvimento
 
   constructor() {
     const authHeader = new Headers();

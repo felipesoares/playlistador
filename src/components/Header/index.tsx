@@ -9,8 +9,8 @@ function Header() {
   return (
     <header className={styles.header}>
       <a href="/" title="">
-        {/* <Link to="/" title="Playlistador"> */}
-        <img src={logo} alt="Playlistador" className={styles.logo} />
+        {/* <Link to="/" title="Playlistator"> */}
+        <img src={logo} alt="Playlistator" className={styles.logo} />
         {/* </Link> */}
       </a>
     </header>

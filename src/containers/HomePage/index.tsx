@@ -2,24 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
-// import PropTypes from "prop-types";
-// import classNames from "classnames";
-
 import styles from "./Home.module.scss";
-// import thumb from "./../../images/thumb.jpg";
 
-import API from "./../../providers/playlistador.providers";
+import API from "./../../providers/playlistator.providers";
 
 export function HomePage(props) {
-  // const { name } = props;
-
   const [playlists, setPlaylists] = useState();
-  const [feedback, setFeedback] = useState("Carregando playlists...");
+  const [feedback, setFeedback] = useState("Carregando playlists..."); // Feedback ao usuário
 
   useEffect(() => {
-    getPlaylists();
+    getPlaylists(); // Ao montar o componente, buscar a lista de playlists
   }, []);
 
+  // Método para consumir a lista de playlists da API em formato JSON
   function getPlaylists() {
     new API()
       .getPlaylists()
@@ -28,7 +23,7 @@ export function HomePage(props) {
           var contentType = response.headers.get("content-type");
           if (contentType && contentType.indexOf("application/json") !== -1) {
             return response.json().then(function(json) {
-              setPlaylists(json.playlists);
+              setPlaylists(json.playlists); // Carrega a lista de playlists
             });
           } else {
             setFeedback(`Formato inválido na resposta da requisição :(`);
@@ -38,7 +33,7 @@ export function HomePage(props) {
         }
       })
       .catch(function(error) {
-        setFeedback(`Erro ao tentar processar a requisição :(`);
+        setFeedback(`Erro ao tentar processar a requisição :(`); // Erro na requisição. Exemplo: Falta de autenticação.
       });
   }
 
@@ -75,9 +70,5 @@ export function HomePage(props) {
     </main>
   );
 }
-
-// HomePage.propTypes = {
-//   foo: PropTypes.string
-// };
 
 export default HomePage;

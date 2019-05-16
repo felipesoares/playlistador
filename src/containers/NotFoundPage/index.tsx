@@ -4,8 +4,6 @@ import { Helmet } from "react-helmet";
 import styles from "./NotFound.module.scss";
 
 export function NotFoundPage(props) {
-  const { name } = props;
-
   return (
     <main className={"main " + styles.notFound}>
       <Helmet>

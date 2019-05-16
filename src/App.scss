@@ -31,15 +31,12 @@
   list-style: inside none;
   vertical-align: baseline;
   border: 0 none;
-  word-break: break-word;
 }
 
 // ESTILO PARA BOX SIZING
 *,
 *:after,
 *:before {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -61,6 +58,30 @@
 
 // ESTILO PARA TAGS HTML
 
+html {
+  font-size: 16px;
+}
+
+body {
+  background-color: #fff;
+  word-wrap: break-word;
+  font-family: "Open Sans", "Montserrat", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong {
+  font-weight: inherit;
+  font-size: inherit;
+  margin: 0;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -78,8 +99,6 @@ input[type="tel"],
 input[type="search"],
 select,
 button {
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
   appearance: none !important;
   &::-ms-expand {
     display: none !important;
@@ -99,11 +118,13 @@ input[type="search"]::-webkit-search-results-decoration {
   max-width: 970px+15px+15px;
   margin: 0 auto;
   padding: 15px;
-  min-height: calc(100vh - 50px - 50px); // 100% - altura da header e do footer
+  min-height: calc(
+    100vh - 50px - 50px
+  ); // 100% - altura da header (50px) e do footer (50px)
   @include minTablet {
     padding: 30px 15px 45px;
     min-height: calc(
       100vh - 150px - 50px
-    ); // 100% - altura da header e do footer
+    ); // 100% - altura da header (150px) e do footer (50px)
   }
 }

@@ -121,7 +121,7 @@
         @include minTablet {
           font-size: 15px;
           float: right;
-          width: 970/310 * 10%;
+          width: calc((100% - 40px) / 3);
           margin: 0;
         }
       }
