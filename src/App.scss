@@ -1,0 +1,109 @@
+@import "./scss/utils.scss";
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("./fonts/OpenSans-Bold.woff2") format("woff2"),
+    url("./fonts/OpenSans-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./fonts/Montserrat-Bold.woff2") format("woff2"),
+    url("./fonts/Montserrat-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("./fonts/OpenSans-Regular.woff2") format("woff2"),
+    url("./fonts/OpenSans-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+// ESTILO RESET CSS
+* {
+  margin: 0;
+  padding: 0;
+  list-style: inside none;
+  vertical-align: baseline;
+  border: 0 none;
+  word-break: break-word;
+}
+
+// ESTILO PARA BOX SIZING
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+// HACKING PARA CLEARFIX
+
+.clearfix {
+  &::after {
+    display: block;
+    content: "";
+    clear: both;
+  }
+}
+
+// HACKING PARA REMOCAO DA BORDA PADRAO DO CHROME NOS INPUTS
+
+:focus {
+  outline: 0;
+}
+
+// ESTILO PARA TAGS HTML
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="search"],
+select,
+button {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  &::-ms-expand {
+    display: none !important;
+  }
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+// ESTILO PARA CLASSES GENERICAS
+
+.main {
+  max-width: 970px+15px+15px;
+  margin: 0 auto;
+  padding: 15px;
+  min-height: calc(100vh - 50px - 50px); // 100% - altura da header e do footer
+  @include minTablet {
+    padding: 30px 15px 45px;
+    min-height: calc(
+      100vh - 150px - 50px
+    ); // 100% - altura da header e do footer
+  }
+}

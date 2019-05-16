@@ -1,0 +1,16 @@
+@import "./../../scss/utils.scss";
+
+.header {
+  background: #f5a623;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  @include minTablet {
+    height: 150px;
+  }
+  .logo {
+    width: 215px;
+  }
+}
