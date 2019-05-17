@@ -33,7 +33,7 @@ export function HomePage(props) {
         }
       })
       .catch(function(error) {
-        setFeedback(`Erro ao tentar processar a requisição :(`); // Erro na requisição. Exemplo: Falta de autenticação.
+        setFeedback(`Erro ao tentar processar a requisição :(`); // Erro na requisição. Exemplo: Falta de um cabeçalho de autorização.
       });
   }
 

@@ -1,6 +1,5 @@
 export default class API {
   configInit: any;
-  url: string = "http://localhost:3001"; // URL de desenvolvimento
 
   constructor() {
     const authHeader = new Headers();
@@ -15,10 +14,13 @@ export default class API {
   }
 
   getPlaylists(): Promise<Response> {
-    return fetch(`${this.url}/playlists`, this.configInit);
+    return fetch(`${process.env.REACT_APP_API}/playlists`, this.configInit);
   }
 
   getPlaylist(playlist: number): Promise<Response> {
-    return fetch(`${this.url}/playlist/${playlist}`, this.configInit);
+    return fetch(
+      `${process.env.REACT_APP_API}/playlist/${playlist}`,
+      this.configInit
+    );
   }
 }

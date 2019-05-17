@@ -3,13 +3,15 @@ import { Helmet } from "react-helmet";
 
 import styles from "./Playlist.module.scss";
 
+import fn from "./../../utils/functions";
+
 import API from "./../../providers/playlistator.providers";
 
 export function PlaylistPage(props) {
   const playlistID = props.match.params.id; // ID da playlist na URL
 
   const [orderBy, setOrderBy] = useState(0); // Ordenação padrão por 'Música'
-  const [openDropDown, setOpenDropDown] = useState(false);
+  const [openDropDown, setOpenDropDown] = useState(false); // Menu de ordenação fechado por padrão
 
   const [filter, setFilter] = useState(""); // Termo da busca
 
@@ -44,7 +46,7 @@ export function PlaylistPage(props) {
               setPlaylistThumb(json.playlist.thumb); // Thumb da playlist
               // setSongs(json.playlist.songs);
               // setResults(json.playlist.songs);
-              orderList(orderBy, getUnique(json.playlist.songs, "id")); // Garante a remoção de registros repetidos da requisição e ordena a playlist pela ordem padrão
+              orderList(orderBy, fn.getUnique(json.playlist.songs, "id")); // Garante a remoção de registros duplicados da requisição e ordena a playlist pela ordem default
               setFeedback("Nenhum resultado encontrado."); // Muda o feedback padrão para o usuário quando o filtro não retorna dados
             });
           } else {
@@ -55,41 +57,8 @@ export function PlaylistPage(props) {
         }
       })
       .catch(function(error) {
-        setFeedback(`Erro ao tentar processar a requisição :(`); // Erro na requisição. Exemplo: Falta de autenticação.
+        setFeedback(`Erro ao tentar processar a requisição :(`); // Erro na requisição. Exemplo: Falta de um cabeçalho de autorização.
       });
-  }
-
-  // Função que remove registros repetidos de um vetor de objetos
-  function getUnique(arr, comp) {
-    const unique = arr
-      .map(e => e[comp])
-
-      // store the keys of the unique objects
-      .map((e, i, final) => final.indexOf(e) === i && i)
-
-      // eliminate the dead keys & store unique objects
-      .filter(e => arr[e])
-      .map(e => arr[e]);
-
-    return unique;
-  }
-
-  // Função que remove acentos de uma string
-  function removerAcentos(s) {
-    return s
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f|\u00b4|\u0060|\u005e|\u007e]/g, "");
-  }
-
-  // Função complementar que ordena o vetor de músicas de acordo com a ordem selecionada
-  function sort(arr, key) {
-    return arr.sort((a, b) => {
-      let c = removerAcentos(a[ordenacao[key].alias]).toLowerCase();
-      let d = removerAcentos(b[ordenacao[key].alias]).toLowerCase();
-      if (c < d) return -1;
-      if (c > d) return 1;
-      return 0;
-    });
   }
 
   // Função que ordena o vetor de músicas com ou sem filtro aplicado
@@ -99,41 +68,16 @@ export function PlaylistPage(props) {
     let arr = Object.assign([], list);
 
     if (filter) {
-      setResults(sort(Object.assign([], results), key));
+      setResults(fn.sort(Object.assign([], results), ordenacao[key].alias));
     } else {
-      setResults(sort(arr, key));
+      setResults(fn.sort(arr, ordenacao[key].alias));
     }
-    setSongs(sort(arr, key));
+    setSongs(fn.sort(arr, ordenacao[key].alias));
   }
 
-  // Função que filtra o vetor de músicas de acordo com o termo pesquisado
+  // Função que filtra o vetor de músicas conforme o termo pesquisado
   function filterList(q, list) {
-    q = removerAcentos(q);
-    function escapeRegExp(s) {
-      return s.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
-    }
-    const words = q
-      .split(/\s+/g)
-      .map(s => s.trim())
-      .filter(s => !!s);
-    const hasTrailingSpace = q.endsWith(" ");
-    const searchRegex = new RegExp(
-      words
-        .map((word, i) => {
-          if (i + 1 === words.length && !hasTrailingSpace) {
-            // The last word - ok with the word being "startswith"-like
-            return `(?=.*\\b${escapeRegExp(word)})`;
-          } else {
-            // Not the last word - expect the whole word exactly
-            return `(?=.*\\b${escapeRegExp(word)}\\b)`;
-          }
-        })
-        .join("") + ".+",
-      "gi"
-    );
-    return list.filter(item => {
-      return searchRegex.test(removerAcentos(item.name)); // + " " + item.artist
-    });
+    return fn.filter(q, list, "name");
   }
 
   return (
@@ -184,12 +128,14 @@ export function PlaylistPage(props) {
             // value={filter}
             // onChange={event => setFilter(event.target.value)}
             autoComplete="off"
-            autoFocus={true}
             onChange={event => {
               setFilter(event.target.value);
               if (event.target.value) {
                 if (results) setResults(filterList(event.target.value, songs)); // filtra as músicas
-              } else setResults(sort(Object.assign([], songs), orderBy)); // limpa o filtro
+              } else
+                setResults(
+                  fn.sort(Object.assign([], songs), ordenacao[orderBy].alias)
+                ); // limpa o filtro
             }}
             className={styles.filter}
           />
